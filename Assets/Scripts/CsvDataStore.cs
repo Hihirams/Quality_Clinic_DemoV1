@@ -122,7 +122,7 @@ public class CsvDataStore : MonoBehaviour
         return byAlias.TryGetValue(key, out row);
     }
 
-    // Umbrales (ajústalos a gusto)
+    // Umbrales (ajústalos)
     public static StateBadge GetState(float overall)
     {
         if (overall >= 85f) return new StateBadge(new Color(0.20f, 0.80f, 0.35f), "OK");   // verde
