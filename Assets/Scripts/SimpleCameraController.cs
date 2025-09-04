@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // Nuevo Input System
+using UnityEngine.InputSystem; 
 
 public class SimpleCameraController : MonoBehaviour
 {
@@ -17,7 +17,7 @@ public class SimpleCameraController : MonoBehaviour
 
     void Update()
     {
-        // Mouse look
+        // mouse look
         if (Mouse.current != null)
         {
             Vector2 delta = Mouse.current.delta.ReadValue();

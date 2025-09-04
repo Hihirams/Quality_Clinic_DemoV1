@@ -51,7 +51,9 @@ public class MachineArea : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (CursorToggle.IsOverUI()) return;  // ← no selecciones si clic fue sobre UI
         Debug.Log($"👉 Click en máquina: {machineName}");
-        OnAreaClicked?.Invoke(this); // SelectionManager decide la selección
+        OnAreaClicked?.Invoke(this);
     }
+
 }

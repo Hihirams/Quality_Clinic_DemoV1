@@ -93,23 +93,36 @@ public class StatusBillboard : MonoBehaviour
         back.transform.localScale = new Vector3(width, height, 1f);
     }
 
+    public float backAlpha = 0.85f; // controla transparencia del fondo
+
+    static MaterialPropertyBlock _mpb; // arriba de la clase, como campo estático
     public void Set(string machineName, float overall)
     {
         EnsureWiring();
 
         var state = CsvDataStore.GetState(overall);
 
+        // texto fijo en negro
         if (text)
         {
             text.text = $"{machineName}\n{overall:0}%  {state.Icon}";
-            float L = 0.2126f * state.Color.r + 0.7152f * state.Color.g + 0.0722f * state.Color.b;
-            text.color = (L > 0.55f) ? new Color(0.12f, 0.12f, 0.12f, 1f) : Color.white;
+            text.color = Color.black;
         }
 
+        // pintar el fondo EXACTAMENTE con el color del estado + alpha fijo
         if (back)
         {
-            var c = back.material.color;
-            back.material.color = new Color(state.Color.r, state.Color.g, state.Color.b, c.a);
+            if (_mpb == null) _mpb = new MaterialPropertyBlock();
+            back.GetPropertyBlock(_mpb);
+
+            var c = state.Color;
+            c.a = backAlpha;
+
+            // URP/Unlit usa _BaseColor; por compatibilidad, seteo ambos
+            _mpb.SetColor("_BaseColor", c);
+            _mpb.SetColor("_Color", c);
+
+            back.SetPropertyBlock(_mpb); // si el renderer tiene varios materiales: back.SetPropertyBlock(_mpb, 0);
         }
 
         ApplyLayout();
