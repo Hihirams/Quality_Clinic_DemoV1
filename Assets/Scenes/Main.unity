@@ -663,8 +663,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97f3e564a90e78a4eb20217398dc3060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleCameraController
-  moveSpeed: 20
+  baseSpeed: 6
+  sprintMultiplier: 2.5
+  acceleration: 14
+  deceleration: 16
+  maxSpeed: 25
+  verticalBoost: 1
   lookSensitivity: 0.12
+  holdRightToLook: 1
+  invertY: 0
+  pitchLimit: 85
+  lockCursorOnPlay: 1
+  wheelSpeedStep: 0.75
+  minBaseSpeed: 1
+  maxBaseSpeed: 20
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1834,6 +1846,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1181533825}
+  - component: {fileID: 1181533826}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -1859,8 +1872,22 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.0000027427502}
-  m_SizeDelta: {x: 0, y: 300}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &1181533826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1181533824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &1260172123
 GameObject:
   m_ObjectHideFlags: 0
@@ -2769,7 +2796,7 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 0
   m_Spacing: 8
-  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 1
@@ -3678,7 +3705,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 275458852}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.11666667
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
