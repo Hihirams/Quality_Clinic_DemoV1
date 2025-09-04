@@ -1,27 +1,17 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class CursorToggle : MonoBehaviour
 {
-    public KeyCode toggleKey = KeyCode.Escape;
-    public bool lockAtStart = false;
-
-    void Start() { SetLock(lockAtStart); }
+    public Key toggleKey = Key.F1;
 
     void Update()
     {
-        if (Input.GetKeyDown(toggleKey))
-            SetLock(Cursor.lockState != CursorLockMode.Locked);
-    }
-
-    public static bool IsOverUI()
-    {
-        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-    }
-
-    public static void SetLock(bool locked)
-    {
-        Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
-        Cursor.visible = !locked;
+        if (Keyboard.current != null && Keyboard.current[toggleKey].wasPressedThisFrame)
+        {
+            bool locked = Cursor.lockState == CursorLockMode.Locked;
+            Cursor.lockState = locked ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = !locked;
+        }
     }
 }

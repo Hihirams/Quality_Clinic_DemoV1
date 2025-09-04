@@ -475,6 +475,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MachineArea
   machineName: AT Honda
   toTint: []
+  _stateColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &320028708
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,7 +664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleCameraController
   moveSpeed: 20
-  lookSpeed: 2
+  lookSensitivity: 0.12
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -677,7 +678,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CursorToggle
   toggleKey: 27
-  lockAtStart: 0
 --- !u!1 &390357046
 GameObject:
   m_ObjectHideFlags: 0
@@ -736,8 +736,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd34df525f3c4140ad5c72a3ba8a9d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaStatusSpawner
-  upFactor: 0.22
   billboardPrefab: {fileID: 3501935360498735837, guid: 8340c49e3bb869d4d8ebcdd129803cc6, type: 3}
+  upFactor: 0.22
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -884,6 +884,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MachineArea
   machineName: VCT L-4
   toTint: []
+  _stateColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &504839534
 GameObject:
   m_ObjectHideFlags: 0
@@ -1209,7 +1210,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 657234253}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1260172124}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: ShowKPIs
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &744267374
 GameObject:
   m_ObjectHideFlags: 0
@@ -1281,11 +1294,11 @@ RectTransform:
   - {fileID: 1084498786}
   m_Father: {fileID: 1976575617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -600, y: 0}
-  m_SizeDelta: {x: 2560, y: 0}
-  m_Pivot: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 300, y: 0}
+  m_SizeDelta: {x: 600, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &774221976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1514,11 +1527,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1976795153}
-  m_Father: {fileID: 1474859332}
+  m_Father: {fileID: 1995610569}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 50, y: -501.8883}
+  m_AnchoredPosition: {x: 50, y: -1529.8883}
   m_SizeDelta: {x: 100, y: 401.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1025696631
@@ -1566,6 +1579,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MachineArea
   machineName: BUZZER L-2
   toTint: []
+  _stateColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &1081323342
 GameObject:
   m_ObjectHideFlags: 0
@@ -1876,13 +1890,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d62792099d6dde44a53784bf7df41a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  panelLeft: {fileID: 1995610568}
+  panelLeft: {fileID: 1995610569}
   title: {fileID: 1324959896}
   kpisGroup: {fileID: 1618358849}
   kpiRowPrefab: {fileID: 8962172584317827998, guid: a46a6eb1c8d05f44f88a789f1c466509, type: 3}
   tabKPIs: {fileID: 657234255}
   tabPred: {fileID: 1403543825}
-  predContainer: {fileID: 1025696629}
+  predContainer: {fileID: 1025696630}
   detailPanel: {fileID: 774221974}
   detailHeader: {fileID: 138640120}
   detailContent: {fileID: 1333472564}
@@ -2426,7 +2440,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1403543823}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1260172124}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: ShowPredictions
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1474859331
 GameObject:
   m_ObjectHideFlags: 0
@@ -2462,7 +2488,6 @@ RectTransform:
   - {fileID: 2081738039}
   - {fileID: 648801090}
   - {fileID: 2052284059}
-  - {fileID: 1025696630}
   m_Father: {fileID: 1995610569}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2660,7 +2685,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 6
+  m_Spacing: 8
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -2745,7 +2770,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_Spacing: 8
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
@@ -3437,6 +3462,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1025696630}
   - {fileID: 1324959894}
   - {fileID: 1581902425}
   - {fileID: 1474859332}
@@ -3466,8 +3492,8 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 0
   m_Spacing: 8
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
@@ -3511,6 +3537,64 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1995610568}
   m_CullTransparentMesh: 1
+--- !u!1 &2029141120
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2029141123}
+  - component: {fileID: 2029141122}
+  - component: {fileID: 2029141121}
+  m_Layer: 0
+  m_Name: _Data
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2029141121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029141120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f1429d7ffe990240a60828090633250, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PerMachineCsvLoader
+--- !u!114 &2029141122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029141120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 642ebc82f72b9024da6f08d1eeb75907, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CsvDataStore
+  fileName: summary.csv
+--- !u!4 &2029141123
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029141120}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 654.2458, y: 0, z: 4636.399}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2052284058
 GameObject:
   m_ObjectHideFlags: 0
@@ -3594,7 +3678,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 275458852}
   m_Direction: 2
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.11666667
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3699,7 +3783,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2071776252}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1260172124}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: CloseDetail
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2071776252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4003,6 +4099,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MachineArea
   machineName: VB-L1
   toTint: []
+  _stateColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -4016,3 +4113,4 @@ SceneRoots:
   - {fileID: 504839537}
   - {fileID: 1976575617}
   - {fileID: 1260172125}
+  - {fileID: 2029141123}

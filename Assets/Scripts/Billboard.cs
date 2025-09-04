@@ -6,24 +6,20 @@ public class Billboard : MonoBehaviour
     Vector3 baseScale;
 
     [Header("Auto-escala")]
-    public float sizePerMeter = 0.06f;   // controla tamaño según distancia
-    public float minScale = 0.6f;
-    public float maxScale = 2.5f;
+    public float sizePerMeter = 0.03f;
+    public float minScale = 0.3f, maxScale = 2.5f;
 
-    void Start()
-    {
-        baseScale = transform.localScale;
-    }
+    void Start() => baseScale = transform.localScale;
 
     void LateUpdate()
     {
         if (!cam) cam = Camera.main;
         if (!cam) return;
 
-        // Hacer que mire a la cámara
+        // mirar a cámara
         transform.rotation = Quaternion.LookRotation(transform.position - cam.transform.position);
 
-        // Mantener tamaño legible
+        // mantener tamaño aparente
         float dist = Vector3.Distance(transform.position, cam.transform.position);
         float k = Mathf.Clamp(dist * sizePerMeter, minScale, maxScale);
         transform.localScale = baseScale * k;

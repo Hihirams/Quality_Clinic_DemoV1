@@ -1,158 +1,163 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager Instance;
+    public static UIManager Instance { get; private set; }
 
-    [Header("Left Panel")]
+    [Header("Panel izquierdo")]
     public RectTransform panelLeft;
-    public TextMeshProUGUI title;
-    public RectTransform kpisGroup;      // <- Content del Scroll
+    public TMP_Text title;
+    public RectTransform kpisGroup;
     public KpiRow kpiRowPrefab;
 
     [Header("Tabs")]
     public Button tabKPIs;
     public Button tabPred;
-    public RectTransform predContainer;  // contenedor para la lista de predicciones
+    public RectTransform predContainer; // contenedor vertical para predicciones (Text TMP por línea)
 
-    [Header("Detail Panel")]
+    [Header("Panel de detalle")]
     public GameObject detailPanel;
-    public TextMeshProUGUI detailHeader;
-    public RectTransform detailContent;  // content del Scroll detalle
-    public TextMeshProUGUI listLinePrefab;
+    public TMP_Text detailHeader;
+    public RectTransform detailContent; // Vertical Layout
+    public TMP_Text listLinePrefab;     // pequeño Text (TMP) para listas
     public Button detailCloseBtn;
 
-    MachineArea _currentArea;
+    string currentMachine = null;
+    readonly List<GameObject> spawned = new();
 
     void Awake()
     {
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-    }
-
-    void OnEnable()
-    {
-        MachineArea.OnAreaClicked += HandleAreaClicked;
-    }
-    void OnDisable()
-    {
-        MachineArea.OnAreaClicked -= HandleAreaClicked;
     }
 
     void Start()
     {
-        // Wiring de pestañas
         if (tabKPIs) tabKPIs.onClick.AddListener(ShowKPIs);
-        if (tabPred) tabPred.onClick.AddListener(ShowPred);
+        if (tabPred) tabPred.onClick.AddListener(ShowPredictions);
+        if (detailCloseBtn) detailCloseBtn.onClick.AddListener(CloseDetail); // ← usa el método público
 
-        if (detailCloseBtn) detailCloseBtn.onClick.AddListener(() =>
-        {
-            if (detailPanel) detailPanel.SetActive(false);
-        });
-
-        // Carga de prueba para ver el panel al inicio (si quieres quitarlo, comenta estas 2 líneas)
         if (CsvDataStore.Instance != null && CsvDataStore.Instance.byName.Count > 0)
-            ShowMachineData("VB-L1"); // pon un nombre existente
+        {
+            ShowMachineData(CsvDataStore.Instance.byName.Keys.First());
+        }
     }
 
-    // ==== Callbacks ====
-    void HandleAreaClicked(MachineArea area)
+
+    public void ShowNone()
     {
-        _currentArea = area;
-        ShowMachineData(area.machineName);
+        currentMachine = null;
+        title.text = "Machine: —";
+        ClearGroup(kpisGroup);
+        ClearGroup(predContainer);
+        if (detailPanel) detailPanel.SetActive(false);
     }
 
-    // ==== Pestañas ====
+    public void ShowMachineData(string machineName)
+    {
+        if (CsvDataStore.Instance == null) return;
+
+        if (!CsvDataStore.Instance.TryGetRow(machineName, out var row))
+        {
+            Debug.LogWarning($"⚠️ UI: no hay datos para '{machineName}' (revisa nombre o CSV)");
+            return;
+        }
+
+        currentMachine = row.MachineName; // guarda el nombre como está en CSV
+        title.text = $"Machine: {currentMachine}  |  Overall {row.OverallResults:0}%";
+
+        BuildKPIs(row);
+        BuildPredictions(row);
+        ShowKPIs();  // asegura que la pestaña visible sea KPIs
+        Debug.Log($"[UI] ShowMachineData: {currentMachine}");
+    }
+
+
+    // -------- KPIs ----------
+    void BuildKPIs(MachineKpis row)
+    {
+        ClearGroup(kpisGroup);
+
+        SpawnKpi("Delivery", row.Delivery);
+        SpawnKpi("Quality", row.Quality);
+        SpawnKpi("Parts", row.Parts);
+        SpawnKpi("Process", row.Process);
+        SpawnKpi("Training", row.Training);
+        SpawnKpi("Mtto", row.Mtto);
+
+        void SpawnKpi(string label, float value)
+        {
+            var item = Instantiate(kpiRowPrefab, kpisGroup);
+            item.Set(label, value, () => ShowDetail(label, value));
+        }
+
+        // 🔧 muy importante para que aparezcan en el Scroll
+        LayoutRebuilder.ForceRebuildLayoutImmediate(kpisGroup);
+    }
+
+
+    // -------- Predicciones ----------
+    void BuildPredictions(MachineKpis row)
+    {
+        ClearGroup(predContainer);
+        var tips = RuleEngine.GetTips(row, currentMachine);
+        foreach (var tip in tips)
+        {
+            var line = Instantiate(listLinePrefab, predContainer);
+            line.text = "• " + tip;
+            spawned.Add(line.gameObject);
+        }
+    }
+
+    // -------- Detalle ----------
+    void ShowDetail(string kpiName, float value)
+    {
+        if (!detailPanel) return;
+        detailPanel.SetActive(true);
+        detailHeader.text = $"{currentMachine} — {kpiName}";
+
+        ClearGroup(detailContent);
+
+        // De momento: ejemplos simples
+        AddDetail($"Valor actual: {value:0}%");
+        AddDetail("Subcausas/histórico: por integrar desde hojas por máquina.");
+        AddDetail("Acciones sugeridas: ver pestaña Predicciones.");
+
+        void AddDetail(string s)
+        {
+            var t = Instantiate(listLinePrefab, detailContent);
+            t.text = "– " + s;
+        }
+    }
+
+    // -------- Tabs ----------
     public void ShowKPIs()
     {
-        if (!panelLeft) return;
-        // Mostrar grupo KPIs y ocultar predicciones
         if (kpisGroup) kpisGroup.gameObject.SetActive(true);
         if (predContainer) predContainer.gameObject.SetActive(false);
     }
 
-    public void ShowPred()
+    public void ShowPredictions()
     {
-        if (!panelLeft) return;
-        // Mostrar predicciones y ocultar KPIs
         if (kpisGroup) kpisGroup.gameObject.SetActive(false);
         if (predContainer) predContainer.gameObject.SetActive(true);
     }
 
-    // ==== Render principal ====
-    public void ShowMachineData(string machineName)
+    // -------- Helpers ----------
+    void ClearGroup(RectTransform group)
     {
-        if (!CsvDataStore.Instance) return;
-
-        if (!CsvDataStore.Instance.byName.TryGetValue(machineName, out var row))
-            return;
-
-        if (title) title.text = $"Machine: {machineName}";
-        ShowKPIs(); // por defecto caemos en la pestaña KPIs
-
-        // Limpiar KPIs anteriores
-        foreach (Transform t in kpisGroup) Destroy(t.gameObject);
-
-        // Agregar KPIs (solo los que sabemos que existen ahora mismo)
-        AddKpi("Delivery", row.Delivery, () => OpenDetail(machineName, "Delivery"));
-        AddKpi("Quality", row.Quality, () => OpenDetail(machineName, "Quality"));
-        // TODO: cuando confirmemos nombres exactos, descomentar:
-        // AddKpi("Parts", row.Parts, () => OpenDetail(machineName, "Parts"));
-        // AddKpi("Process", row.ProcessManufacturing, () => OpenDetail(machineName, "ProcessManufacturing"));
-        // AddKpi("Training - DNA", row.TrainingDNA, () => OpenDetail(machineName, "TrainingDNA"));
-        AddKpi("Mtto", row.Mtto, () => OpenDetail(machineName, "Mtto"));
-
-        // Predicciones
-        BuildPredictions(row);
+        if (!group) return;
+        for (int i = group.childCount - 1; i >= 0; i--)
+            Destroy(group.GetChild(i).gameObject);
     }
 
-    void AddKpi(string label, float value, Action onDetail)
+    public void CloseDetail()
     {
-        if (!kpiRowPrefab || !kpisGroup) return;
-        var rowGO = Instantiate(kpiRowPrefab, kpisGroup);
-        rowGO.Set(label, value, onDetail);
-        Debug.Log("[UI] KPI agregado: " + label);
+        if (detailPanel) detailPanel.SetActive(false);
     }
 
-    // ==== Detalle ====
-    void OpenDetail(string machineName, string kpiName)
-    {
-        if (!detailPanel || !detailContent || !listLinePrefab) return;
-
-        detailPanel.SetActive(true);
-        if (detailHeader) detailHeader.text = $"{machineName} / {kpiName}";
-
-        // limpiar
-        foreach (Transform t in detailContent) Destroy(t.gameObject);
-
-        // aquí colocaríamos las líneas leídas de la hoja por máquina
-        var placeholders = new List<string> {
-            "Subcausa A — 40%",
-            "Subcausa B — 35%",
-            "Comentario: revisar estándar",
-            "Fecha: 2025-02-04"
-        };
-        foreach (var s in placeholders)
-        {
-            var line = Instantiate(listLinePrefab, detailContent);
-            line.text = "• " + s;
-        }
-    }
-
-    // ==== Predicciones (reglas) ====
-    void BuildPredictions(MachineKpis row)
-    {
-        if (!predContainer || !listLinePrefab) return;
-        foreach (Transform t in predContainer) Destroy(t.gameObject);
-
-        var tips = RuleEngine.GetTips(row, _currentArea);
-        foreach (var tip in tips)
-        {
-            var t = Instantiate(listLinePrefab, predContainer);
-            t.text = "• " + tip;
-        }
-    }
 }
