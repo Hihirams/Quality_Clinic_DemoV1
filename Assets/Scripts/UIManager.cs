@@ -8,6 +8,10 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
+    [Header("Raíz visual del scroll de KPIs (padre de Viewport)")]
+    public GameObject kpiRoot;   // ← asigna aquí el GameObject del Scroll de KPIs
+
+
     [Header("Panel izquierdo")]
     public RectTransform panelLeft;
     public TMP_Text title;
@@ -109,8 +113,10 @@ public class UIManager : MonoBehaviour
         {
             var line = Instantiate(listLinePrefab, predContainer);
             line.text = "• " + tip;
+            line.color = Color.black;   // 👈 fuerza texto negro
             spawned.Add(line.gameObject);
         }
+
     }
 
     // -------- Detalle ----------
@@ -137,15 +143,46 @@ public class UIManager : MonoBehaviour
     // -------- Tabs ----------
     public void ShowKPIs()
     {
+        // Muestra el panel de KPIs (scroll completo si está asignado)
+        if (kpiRoot) kpiRoot.SetActive(true);
         if (kpisGroup) kpisGroup.gameObject.SetActive(true);
+
+        // Oculta predicciones
         if (predContainer) predContainer.gameObject.SetActive(false);
+
+        // Si por lo que sea no hay filas (p.ej. venías de Predicciones), repuebla
+        if (CsvDataStore.Instance != null && currentMachine != null && kpisGroup.childCount == 0)
+        {
+            if (CsvDataStore.Instance.TryGetRow(currentMachine, out var row))
+            {
+                BuildKPIs(row);
+            }
+        }
+
+        // fuerza layout (a veces se crean pero no se ven hasta re-construir)
+        if (kpisGroup) LayoutRebuilder.ForceRebuildLayoutImmediate(kpisGroup);
     }
+
 
     public void ShowPredictions()
     {
+        // Oculta KPIs
+        if (kpiRoot) kpiRoot.SetActive(false);
         if (kpisGroup) kpisGroup.gameObject.SetActive(false);
+
+        // Muestra Predicciones
         if (predContainer) predContainer.gameObject.SetActive(true);
+
+        // Si no hay tips aún (primer click desde KPIs), repuebla
+        if (CsvDataStore.Instance != null && currentMachine != null && predContainer.childCount == 0)
+        {
+            if (CsvDataStore.Instance.TryGetRow(currentMachine, out var row))
+            {
+                BuildPredictions(row);
+            }
+        }
     }
+
 
     // -------- Helpers ----------
     void ClearGroup(RectTransform group)
